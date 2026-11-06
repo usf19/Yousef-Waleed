@@ -1,0 +1,6 @@
+{
+  "name": "Peculiar Atelier",
+  "description": "Peculiar Atelier. Unusual by intent. Tug the cloth, I dare you.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

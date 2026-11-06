@@ -1,0 +1,2116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Peculiar Atelier — Unusual by intent</title>
+    <meta name="description" content="Peculiar Atelier. Unusual by intent. Tug the cloth, I dare you." />
+    <meta property="og:title" content="Peculiar Atelier — Unusual by intent" />
+    <meta property="og:description" content="Peculiar Atelier. Unusual by intent. Tug the cloth, I dare you." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://d2ol7oe51mr4n9.cloudfront.net" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --paper: #e3e4e9;
+        --paper-edge: #cfd1d9;
+        --ink: #000000;
+        --ink-soft: rgba(0, 0, 0, 0.5);
+        --violet: #5b07fb;
+        --violet-deep: #4a00d6;
+        --white: #ffffff;
+        --gutter: clamp(20px, 3.2vw, 46px);
+        --display: clamp(44px, min(7.65vw, 13.6vh), 168px);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        overflow: hidden;
+      }
+
+      .hero {
+        position: relative;
+        height: 100vh;
+        height: 100svh;
+        min-height: 480px;
+        overflow: hidden;
+        isolation: isolate;
+        background: radial-gradient(120% 95% at 58% 38%, #e8e9ed 0%, var(--paper) 46%, var(--paper-edge) 100%);
+      }
+
+      .hero__cloth {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        z-index: 0;
+        touch-action: pan-y;
+        -webkit-tap-highlight-color: transparent;
+        outline: none;
+      }
+
+      .hero__cloth.is-over {
+        cursor: grab;
+      }
+
+      .hero__cloth.is-held {
+        cursor: grabbing;
+      }
+
+      .hero__cloth:focus-visible {
+        outline: 2px solid var(--violet);
+        outline-offset: -6px;
+      }
+
+      .hero__still {
+        position: absolute;
+        left: 40%;
+        top: 48.5%;
+        width: min(64vw, 84vh);
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        transform: translate(-50%, -50%) rotate(5deg);
+        box-shadow: -18px 40px 70px rgba(20, 20, 40, 0.22);
+        display: none;
+      }
+
+      .hero.no-cloth .hero__still {
+        display: block;
+      }
+
+      .hero.no-cloth .hero__cloth {
+        display: none;
+      }
+
+      .nav {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px var(--gutter) 0;
+        pointer-events: none;
+        animation: rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+
+      .nav > * {
+        pointer-events: auto;
+      }
+
+      .nav__logo {
+        font-size: 19px;
+        font-weight: 400;
+        letter-spacing: -0.045em;
+        line-height: 36px;
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      .nav__actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        height: 36px;
+        padding: 0 18px;
+        border: none;
+        border-radius: 999px;
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: -0.045em;
+        line-height: 1;
+        color: var(--white);
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+          transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+          background-color 0.2s;
+      }
+
+      .pill:hover {
+        transform: translateY(-1px);
+      }
+
+      .pill:active {
+        transform: translateY(-1px) scale(0.98);
+      }
+
+      .pill--menu {
+        background: var(--ink);
+        padding-left: 16px;
+      }
+
+      .pill--menu:hover {
+        background: #1b1b1f;
+      }
+
+      .pill--start {
+        background: var(--violet);
+      }
+
+      .pill--start:hover {
+        background: var(--violet-deep);
+      }
+
+      .burger {
+        display: grid;
+        gap: 4px;
+        width: 24px;
+      }
+
+      .burger i {
+        height: 1.5px;
+        background: var(--white);
+        border-radius: 1px;
+        display: block;
+        transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      .pill--menu:hover .burger i:first-child {
+        transform: translateX(-2px);
+      }
+
+      .pill--menu:hover .burger i:last-child {
+        transform: translateX(2px);
+      }
+
+      .nav__logo:focus-visible,
+      .pill:focus-visible {
+        outline: 2px solid var(--violet);
+        outline-offset: 3px;
+      }
+
+      .pill--start:focus-visible {
+        outline-color: var(--ink);
+      }
+
+      .hero__title {
+        position: absolute;
+        z-index: 1;
+        left: 66.9%;
+        top: 48.4%;
+        transform: translateY(-50%);
+        margin: 0;
+        font-size: var(--display);
+        font-weight: 500;
+        line-height: 0.99;
+        letter-spacing: -0.06em;
+        white-space: nowrap;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      .hero__title span {
+        display: block;
+        animation: rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+
+      .hero__title span.soft {
+        color: var(--ink-soft);
+        animation-delay: 0.08s;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 1099px), (max-aspect-ratio: 5/4) {
+        :root {
+          --display: clamp(44px, min(12.4vw, 11vh), 120px);
+        }
+        .hero__title {
+          left: var(--gutter);
+          top: auto;
+          bottom: clamp(20px, 4vh, 44px);
+          transform: none;
+        }
+        .hero__still {
+          left: 50%;
+          top: 44%;
+          width: min(78vw, 60vh);
+        }
+      }
+
+      @media (max-width: 520px) {
+        .pill--start {
+          display: none;
+        }
+        .nav__logo {
+          font-size: 18px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .nav,
+        .hero__title span,
+        .hero__title span.soft {
+          animation: none !important;
+        }
+        .pill,
+        .burger i {
+          transition: none !important;
+        }
+      }
+
+      /* Gate Lock Screen Overlay */
+      .gate {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: radial-gradient(120% 95% at 50% 40%, #eef1f6 0%, var(--paper) 48%, var(--paper-edge) 100%);
+        overflow: hidden;
+        perspective: 1200px;
+        transition:
+          opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+          visibility 0.6s;
+      }
+
+      .gate__canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .gate.is-unlocked {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .gate__card {
+        position: relative;
+        width: 100%;
+        max-width: 440px;
+        background: rgba(255, 255, 255, 0.84);
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 32px;
+        padding: clamp(32px, 6vw, 46px);
+        box-shadow:
+          0 28px 70px rgba(20, 20, 45, 0.12),
+          0 0 0 1px rgba(91, 7, 251, 0.08),
+          0 0 35px rgba(91, 7, 251, 0.06);
+        text-align: center;
+        transform-style: preserve-3d;
+        transition: transform 0.12s ease-out, box-shadow 0.3s ease;
+      }
+
+      .gate__card::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: 34px;
+        background: linear-gradient(135deg, rgba(91, 7, 251, 0.4), rgba(0, 240, 255, 0.3), rgba(255, 0, 128, 0.3), rgba(91, 7, 251, 0.4));
+        background-size: 300% 300%;
+        animation: gradientBorder 8s ease infinite;
+        z-index: -1;
+        opacity: 0.55;
+        filter: blur(6px);
+      }
+
+      @keyframes gradientBorder {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      .gate__icon-wrap {
+        position: relative;
+        width: 58px;
+        height: 58px;
+        margin: 0 auto 18px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(91, 7, 251, 0.1), rgba(0, 240, 255, 0.08));
+        border: 1px solid rgba(91, 7, 251, 0.2);
+        color: var(--violet);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 20px rgba(91, 7, 251, 0.15);
+        animation: floatIcon 3.5s ease-in-out infinite alternate;
+        transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.3s, box-shadow 0.3s;
+      }
+
+      @keyframes floatIcon {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-5px); }
+      }
+
+      .gate__icon-shackle {
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transform-origin: 17px 11px;
+      }
+
+      .gate__icon-wrap.is-unlocked .gate__icon-shackle {
+        transform: translateY(-5px) rotate(-28deg);
+      }
+
+      .gate__icon-wrap.is-unlocked {
+        background: linear-gradient(135deg, #5b07fb, #00f0ff);
+        color: #ffffff;
+        box-shadow: 0 0 35px rgba(91, 7, 251, 0.6), 0 0 15px rgba(0, 240, 255, 0.5);
+        transform: scale(1.15);
+      }
+
+      .gate__logo {
+        font-size: 24px;
+        font-weight: 500;
+        letter-spacing: -0.045em;
+        color: var(--ink);
+        margin: 0 0 6px;
+      }
+
+      .gate__desc {
+        font-size: 14px;
+        color: var(--ink-soft);
+        margin: 0 0 24px;
+        line-height: 1.5;
+      }
+
+      .gate__form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .gate__input-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .gate__input {
+        width: 100%;
+        height: 50px;
+        padding: 0 46px 0 22px;
+        border-radius: 999px;
+        border: 1px solid rgba(0, 0, 0, 0.14);
+        background: #ffffff;
+        font-family: inherit;
+        font-size: 17px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        color: var(--ink);
+        outline: none;
+        transition: border-color 0.25s, box-shadow 0.25s, transform 0.15s;
+      }
+
+      .gate__input:focus {
+        border-color: var(--violet);
+        box-shadow: 0 0 0 4px rgba(91, 7, 251, 0.18), 0 0 18px rgba(91, 7, 251, 0.12);
+        transform: translateY(-1px);
+      }
+
+      .gate__toggle-btn {
+        position: absolute;
+        right: 12px;
+        width: 34px;
+        height: 34px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ink-soft);
+        border-radius: 50%;
+        padding: 0;
+        transition: color 0.2s, background-color 0.2s;
+      }
+
+      .gate__toggle-btn:hover {
+        color: var(--ink);
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      .gate__submit {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        height: 48px;
+        border-radius: 999px;
+        border: none;
+        background: linear-gradient(135deg, var(--violet) 0%, #4000b8 100%);
+        color: var(--white);
+        font-family: inherit;
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(91, 7, 251, 0.28);
+        transition: background-color 0.25s, transform 0.2s, box-shadow 0.25s;
+      }
+
+      .gate__submit::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .gate__submit:hover::after {
+        left: 100%;
+      }
+
+      .gate__submit:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 30px rgba(91, 7, 251, 0.42);
+      }
+
+      .gate__submit:active {
+        transform: translateY(0) scale(0.98);
+      }
+
+      .gate__error {
+        min-height: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #dc2626;
+        margin-top: 4px;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: opacity 0.25s, transform 0.25s;
+      }
+
+      .gate__error.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .gate__hint {
+        margin-top: 18px;
+        font-size: 13px;
+        color: var(--ink-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .gate__chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(91, 7, 251, 0.08);
+        border: 1px solid rgba(91, 7, 251, 0.2);
+        padding: 4px 14px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        color: var(--violet);
+        cursor: pointer;
+        transition: transform 0.2s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+        user-select: none;
+      }
+
+      .gate__chip:hover {
+        transform: scale(1.05);
+        background: rgba(91, 7, 251, 0.15);
+        border-color: var(--violet);
+        box-shadow: 0 0 14px rgba(91, 7, 251, 0.25);
+      }
+
+      .gate__chip:active {
+        transform: scale(0.98);
+      }
+
+      .pill--lock {
+        background: rgba(0, 0, 0, 0.06);
+        color: var(--ink);
+        padding: 0 14px;
+        display: none;
+      }
+
+      .pill--lock:hover {
+        background: rgba(0, 0, 0, 0.12);
+      }
+
+      @keyframes gateShake {
+        0%, 100% { transform: translateX(0); }
+        15%, 55%, 85% { transform: translateX(-9px) rotate(-1deg); }
+        35%, 75% { transform: translateX(9px) rotate(1deg); }
+      }
+
+      .gate__card.has-error {
+        animation: gateShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        border-color: rgba(220, 38, 38, 0.4);
+        box-shadow: 0 0 30px rgba(220, 38, 38, 0.25);
+      }
+
+      .gate__card.is-unlocking {
+        animation: unlockPulse 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      @keyframes unlockPulse {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 0 40px rgba(91, 7, 251, 0.3);
+        }
+        40% {
+          transform: scale(1.04) rotate(0.5deg);
+          box-shadow: 0 0 80px rgba(91, 7, 251, 0.8), 0 0 40px rgba(0, 240, 255, 0.6);
+        }
+        100% {
+          transform: scale(0.92) translateY(20px);
+          opacity: 0;
+          filter: blur(10px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Password Access Gate -->
+    <div class="gate" id="gate" role="dialog" aria-modal="true" aria-label="Password Access Gate">
+      <canvas class="gate__canvas" id="gate-canvas"></canvas>
+      <div class="gate__card" id="gate-card">
+        <div class="gate__icon-wrap" id="gate-icon-wrap" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path class="gate__icon-shackle" id="gate-shackle" d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <h2 class="gate__logo">Peculiar Atelier</h2>
+        <p class="gate__desc">Restricted Entry · أدخل كلمة المرور للدخول</p>
+
+        <form class="gate__form" id="gate-form">
+          <div class="gate__input-wrap">
+            <input
+              type="password"
+              class="gate__input"
+              id="gate-pass"
+              placeholder="21/1/2006"
+              autocomplete="current-password"
+              required
+            />
+            <button class="gate__toggle-btn" id="gate-toggle" type="button" aria-label="Toggle password visibility">
+              <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+          <button type="submit" class="gate__submit" id="gate-submit">
+            Enter Atelier →
+          </button>
+          <div class="gate__error" id="gate-error" aria-live="polite"></div>
+        </form>
+
+        <div class="gate__hint">
+          <span>Password:</span>
+          <button type="button" class="gate__chip" id="hint-chip" title="Click to auto-type password">
+            <span>✦ 21/1/2006</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <section class="hero" id="hero" aria-label="Peculiar Atelier">
+      <canvas
+        class="hero__cloth"
+        id="cloth"
+        role="img"
+        tabindex="-1"
+        aria-label="A violet holographic cloth showing a chrome octopus beneath the words Strange by design. Grab it then tug it around."
+      ></canvas>
+      <img
+        class="hero__still"
+        id="still"
+        alt=""
+        decoding="async"
+        src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/9212999e-7a4a-4f70-bc34-e4e1c4533b81.jpg"
+      />
+      <header class="nav">
+        <a class="nav__logo" href="#hero">Peculiar Atelier</a>
+        <div class="nav__actions">
+          <button class="pill pill--lock" id="gate-lock-btn" type="button" title="Lock access">
+            <span>🔒 Lock</span>
+          </button>
+          <button class="pill pill--menu" type="button" aria-haspopup="true" aria-expanded="false">
+            <span class="burger" aria-hidden="true"><i></i><i></i><i></i></span>More
+          </button>
+          <a class="pill pill--start" href="#start">Start a brief</a>
+        </div>
+      </header>
+      <h1 class="hero__title"><span>Grab me</span><span class="soft">I dare you</span></h1>
+    </section>
+
+    <script>
+      (function () {
+        'use strict';
+
+        var canvas = document.getElementById('cloth');
+        var heroEl = document.getElementById('hero');
+
+        function fail() {
+          heroEl.classList.add('no-cloth');
+        }
+
+        var gl = null;
+        try {
+          gl = canvas.getContext('webgl', {
+            alpha: true,
+            antialias: true,
+            premultipliedAlpha: true,
+            powerPreference: 'high-performance'
+          });
+        } catch (e) {
+          fail();
+          return;
+        }
+
+        if (!gl) {
+          fail();
+          return;
+        }
+
+        canvas.addEventListener('webglcontextlost', function (e) {
+          e.preventDefault();
+          fail();
+        });
+
+        // Settings
+        var SIZE = 0.90;
+        var ASPECT = 1.12;
+        var SPREAD = 0.98;
+        var PIN_ROLL = 5.5 * Math.PI / 180;
+        var FLUTTER = 0.35;
+        var DAMPING = 0.30;
+        var STIFFNESS = 0.60;
+        var CRUMPLE = 0.55;
+        var GRAB_RADIUS = 0.12;
+        var CARRY_RADIUS = 0.20;
+        var GRAVITY = 2.6;
+        var TILT = -10 * Math.PI / 180;
+        var TURN = -12 * Math.PI / 180;
+        var PERSPECTIVE = 0.45;
+        var MAX_SPEED = 12;
+        var SUB_STEPS = 8;
+
+        var COLS = 46;
+        var ROWS = 42;
+        var TOTAL_POINTS = COLS * ROWS; // 1932
+        var NUM_CELLS = (COLS - 1) * (ROWS - 1);
+        var NUM_INDICES = NUM_CELLS * 6;
+
+        var CH = SIZE;
+        var CW = SIZE * ASPECT;
+
+        var PIN_LEFT = (ROWS - 1) * COLS; // top-left (col 0, row 41)
+        var PIN_RIGHT = (ROWS - 1) * COLS + (COLS - 1); // top-right (col 45, row 41)
+
+        // Camera
+        var cosT = Math.cos(TILT);
+        var sinT = Math.sin(TILT);
+        var cosR = Math.cos(TURN);
+        var sinR = Math.sin(TURN);
+
+        var R0 = [cosR, 0, sinR];
+        var R1 = [sinT * sinR, cosT, -sinT * cosR];
+        var R2 = [-cosT * sinR, sinT, cosT * cosR];
+
+        var CAM = Math.exp(Math.log(18) * (1 - PERSPECTIVE) + Math.log(1.7) * PERSPECTIVE);
+
+        function worldToView(px, py, pz) {
+          return {
+            qx: R0[0] * px + R0[1] * py + R0[2] * pz,
+            qy: R1[0] * px + R1[1] * py + R1[2] * pz,
+            qz: R2[0] * px + R2[1] * py + R2[2] * pz
+          };
+        }
+
+        function viewToWorld(qx, qy, qz) {
+          return {
+            px: R0[0] * qx + R1[0] * qy + R2[0] * qz,
+            py: R0[1] * qx + R1[1] * qy + R2[1] * qz,
+            pz: R0[2] * qx + R1[2] * qy + R2[2] * qz
+          };
+        }
+
+        // Crease & Rest positions
+        function ridge(x) {
+          var s = Math.sin(x);
+          return Math.sqrt(s * s + 0.03) - 0.64;
+        }
+
+        function crease(u, v) {
+          return CRUMPLE * 0.045 * CH * (
+            ridge(2.7 * u + 2.9 * v + 0.7) +
+            0.8 * ridge(-2.6 * u + 3.3 * v + 2.1) +
+            0.5 * Math.sin(4.9 * u - 1.4 * v + 2.2) +
+            0.55 * ridge(1.1 * u + 6.4 * v + 1.3) +
+            0.4 * ridge(8.3 * u + 3.9 * v + 0.2) +
+            0.3 * ridge(-5.7 * u + 9.1 * v + 1.6)
+          );
+        }
+
+        var halfPin = 0.5 * CW * SPREAD;
+        var topPin = 0.5 * CH;
+        var cosRoll = Math.cos(PIN_ROLL);
+        var sinRoll = Math.sin(PIN_ROLL);
+
+        var pinLeftPos = {
+          x: -halfPin * cosRoll,
+          y: topPin + halfPin * sinRoll,
+          z: 0
+        };
+        var pinRightPos = {
+          x: halfPin * cosRoll,
+          y: topPin - halfPin * sinRoll,
+          z: 0
+        };
+
+        var restPos = new Float32Array(TOTAL_POINTS * 3);
+        var flatU = new Float32Array(TOTAL_POINTS);
+        var flatV = new Float32Array(TOTAL_POINTS);
+        var flatDistLeft = new Float32Array(TOTAL_POINTS);
+        var flatDistRight = new Float32Array(TOTAL_POINTS);
+        var pos = new Float32Array(TOTAL_POINTS * 3);
+        var prev = new Float32Array(TOTAL_POINTS * 3);
+        var uvCoords = new Float32Array(TOTAL_POINTS * 2);
+
+        for (var r = 0; r < ROWS; r++) {
+          var vNorm = r / (ROWS - 1);
+          for (var c = 0; c < COLS; c++) {
+            var uNorm = c / (COLS - 1);
+            var i = r * COLS + c;
+
+            flatU[i] = uNorm;
+            flatV[i] = vNorm;
+
+            uvCoords[i * 2 + 0] = uNorm;
+            uvCoords[i * 2 + 1] = 1.0 - vNorm;
+
+            var fx = (uNorm - 0.5) * CW;
+            var fy = (vNorm - 0.5) * CH;
+            var fz = crease(uNorm, vNorm);
+
+            restPos[i * 3 + 0] = fx;
+            restPos[i * 3 + 1] = fy;
+            restPos[i * 3 + 2] = fz;
+
+            flatDistLeft[i] = Math.hypot(fx - (-0.5 * CW), fy - (0.5 * CH));
+            flatDistRight[i] = Math.hypot(fx - (0.5 * CW), fy - (0.5 * CH));
+
+            var scaleX = SPREAD + (1.0 - SPREAD) * (1.0 - vNorm) * (1.0 - vNorm);
+            var x1 = fx * scaleX;
+            var y1 = fy;
+            var z1 = fz;
+
+            var dy = y1 - topPin;
+            var x_new = x1 * cosRoll + dy * sinRoll;
+            var y_new = topPin - x1 * sinRoll + dy * cosRoll;
+            var z_new = z1;
+
+            pos[i * 3 + 0] = x_new;
+            pos[i * 3 + 1] = y_new;
+            pos[i * 3 + 2] = z_new;
+
+            prev[i * 3 + 0] = x_new;
+            prev[i * 3 + 1] = y_new;
+            prev[i * 3 + 2] = z_new;
+          }
+        }
+
+        pos[PIN_LEFT * 3 + 0] = pinLeftPos.x;
+        pos[PIN_LEFT * 3 + 1] = pinLeftPos.y;
+        pos[PIN_LEFT * 3 + 2] = pinLeftPos.z;
+        prev[PIN_LEFT * 3 + 0] = pinLeftPos.x;
+        prev[PIN_LEFT * 3 + 1] = pinLeftPos.y;
+        prev[PIN_LEFT * 3 + 2] = pinLeftPos.z;
+
+        pos[PIN_RIGHT * 3 + 0] = pinRightPos.x;
+        pos[PIN_RIGHT * 3 + 1] = pinRightPos.y;
+        pos[PIN_RIGHT * 3 + 2] = pinRightPos.z;
+        prev[PIN_RIGHT * 3 + 0] = pinRightPos.x;
+        prev[PIN_RIGHT * 3 + 1] = pinRightPos.y;
+        prev[PIN_RIGHT * 3 + 2] = pinRightPos.z;
+
+        // Triangle indices
+        var indices = new Uint16Array(NUM_INDICES);
+        var idxPtr = 0;
+        for (var cellR = 0; cellR < ROWS - 1; cellR++) {
+          for (var cellC = 0; cellC < COLS - 1; cellC++) {
+            var i0 = cellR * COLS + cellC;
+            var i1 = cellR * COLS + cellC + 1;
+            var i2 = (cellR + 1) * COLS + cellC;
+            var i3 = (cellR + 1) * COLS + cellC + 1;
+
+            indices[idxPtr++] = i0;
+            indices[idxPtr++] = i1;
+            indices[idxPtr++] = i2;
+
+            indices[idxPtr++] = i1;
+            indices[idxPtr++] = i3;
+            indices[idxPtr++] = i2;
+          }
+        }
+
+        // Links
+        var bendStiffness = 0.02 + (0.60 - 0.02) * 0.60; // 0.368
+        var rawLinks = [];
+
+        function addLink(p1, p2, stiff) {
+          var dX = restPos[p1 * 3 + 0] - restPos[p2 * 3 + 0];
+          var dY = restPos[p1 * 3 + 1] - restPos[p2 * 3 + 1];
+          var dZ = restPos[p1 * 3 + 2] - restPos[p2 * 3 + 2];
+          rawLinks.push(p1, p2, Math.hypot(dX, dY, dZ), stiff);
+        }
+
+        for (var rL = 0; rL < ROWS; rL++) {
+          for (var cL = 0; cL < COLS; cL++) {
+            var pt = rL * COLS + cL;
+            if (cL + 1 < COLS) addLink(pt, rL * COLS + (cL + 1), 1.0);
+            if (rL + 1 < ROWS) addLink(pt, (rL + 1) * COLS + cL, 1.0);
+            if (cL + 1 < COLS && rL + 1 < ROWS) addLink(pt, (rL + 1) * COLS + (cL + 1), 0.5);
+            if (cL - 1 >= 0 && rL + 1 < ROWS) addLink(pt, (rL + 1) * COLS + (cL - 1), 0.5);
+            if (cL + 2 < COLS) addLink(pt, rL * COLS + (cL + 2), bendStiffness);
+            if (rL + 2 < ROWS) addLink(pt, (rL + 2) * COLS + cL, bendStiffness);
+            if (cL + 5 < COLS) addLink(pt, rL * COLS + (cL + 5), bendStiffness * 0.5);
+            if (rL + 5 < ROWS) addLink(pt, (rL + 5) * COLS + cL, bendStiffness * 0.5);
+          }
+        }
+
+        var NUM_LINKS = rawLinks.length / 4;
+        var linkP1 = new Int32Array(NUM_LINKS);
+        var linkP2 = new Int32Array(NUM_LINKS);
+        var linkRest = new Float32Array(NUM_LINKS);
+        var linkStiff = new Float32Array(NUM_LINKS);
+
+        for (var k = 0; k < NUM_LINKS; k++) {
+          linkP1[k] = rawLinks[k * 4 + 0];
+          linkP2[k] = rawLinks[k * 4 + 1];
+          linkRest[k] = rawLinks[k * 4 + 2];
+          linkStiff[k] = rawLinks[k * 4 + 3];
+        }
+
+        // Normals buffer
+        var normals = new Float32Array(TOTAL_POINTS * 3);
+        function updateNormals() {
+          for (var rN = 0; rN < ROWS; rN++) {
+            var rowOffset = rN * COLS;
+            var downOffset = (rN > 0 ? rN - 1 : rN) * COLS;
+            var upOffset = (rN < ROWS - 1 ? rN + 1 : rN) * COLS;
+
+            for (var cN = 0; cN < COLS; cN++) {
+              var ptN = rowOffset + cN;
+              var leftIdx = rowOffset + (cN > 0 ? cN - 1 : cN);
+              var rightIdx = rowOffset + (cN < COLS - 1 ? cN + 1 : cN);
+              var downIdx = downOffset + cN;
+              var upIdx = upOffset + cN;
+
+              var dxx = pos[rightIdx * 3 + 0] - pos[leftIdx * 3 + 0];
+              var dxy = pos[rightIdx * 3 + 1] - pos[leftIdx * 3 + 1];
+              var dxz = pos[rightIdx * 3 + 2] - pos[leftIdx * 3 + 2];
+
+              var dyx = pos[upIdx * 3 + 0] - pos[downIdx * 3 + 0];
+              var dyy = pos[upIdx * 3 + 1] - pos[downIdx * 3 + 1];
+              var dyz = pos[upIdx * 3 + 2] - pos[downIdx * 3 + 2];
+
+              var nx = dxy * dyz - dxz * dyy;
+              var ny = dxz * dyx - dxx * dyz;
+              var nz = dxx * dyy - dxy * dyx;
+
+              var len = Math.hypot(nx, ny, nz);
+              if (len > 1e-6) {
+                nx /= len;
+                ny /= len;
+                nz /= len;
+              } else {
+                nx = 0;
+                ny = 0;
+                nz = 1;
+              }
+
+              normals[ptN * 3 + 0] = nx;
+              normals[ptN * 3 + 1] = ny;
+              normals[ptN * 3 + 2] = nz;
+            }
+          }
+        }
+
+        // Prefers reduced motion
+        var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        var prefersReducedMotion = motionQuery.matches;
+        motionQuery.addEventListener('change', function (e) {
+          prefersReducedMotion = e.matches;
+        });
+
+        // View & Resize
+        var cx = 0.402;
+        var cy = 0.485;
+        var zoom = 1.0;
+        var aspectRatio = 1.0;
+        var heroWidth = 1280;
+        var heroHeight = 724;
+
+        function updateView() {
+          var rect = heroEl.getBoundingClientRect();
+          heroWidth = rect.width;
+          heroHeight = rect.height;
+          var dpr = Math.min(window.devicePixelRatio || 1, 2);
+          var pw = Math.max(1, Math.round(heroWidth * dpr));
+          var ph = Math.max(1, Math.round(heroHeight * dpr));
+
+          if (canvas.width !== pw || canvas.height !== ph) {
+            canvas.width = pw;
+            canvas.height = ph;
+            resizeShadowFbo(Math.max(1, Math.floor(pw / 8)), Math.max(1, Math.floor(ph / 8)));
+          }
+
+          aspectRatio = heroWidth / heroHeight;
+
+          if (heroWidth >= 1100 && aspectRatio >= 1.25) {
+            cx = 0.402;
+            cy = 0.485;
+            zoom = Math.min(1.0, (0.58 * aspectRatio) / (CW * 1.12));
+          } else {
+            cx = 0.5;
+            cy = aspectRatio < 0.75 ? 0.41 : 0.43;
+            zoom = Math.min(
+              1.0,
+              (0.92 * aspectRatio) / (CW * 1.12),
+              (aspectRatio < 0.75 ? 0.60 : 0.66) / CH
+            );
+          }
+        }
+
+        // Grabbing state
+        var isHeld = false;
+        var activePointerId = null;
+        var grabbedIdx = -1;
+        var rememberedViewDepth = 0;
+        var rememberedOffsetScreenX = 0;
+        var rememberedOffsetScreenY = 0;
+        var currentPtrScreenX = 0;
+        var currentPtrScreenY = 0;
+
+        var carryWeights = new Float32Array(TOTAL_POINTS);
+        var invMass = new Float32Array(TOTAL_POINTS);
+        for (var im = 0; im < TOTAL_POINTS; im++) {
+          invMass[im] = (im === PIN_LEFT || im === PIN_RIGHT) ? 0.0 : 1.0;
+        }
+
+        function getScreenCoords(clientX, clientY) {
+          var rect = heroEl.getBoundingClientRect();
+          return {
+            x: ((clientX - rect.left) / rect.width - cx) * aspectRatio / zoom,
+            y: (cy - (clientY - rect.top) / rect.height) / zoom
+          };
+        }
+
+        function findPick(ptrX, ptrY) {
+          var bestScore = Infinity;
+          var bestIdx = -1;
+          var bestQz = 0;
+          var bestOffX = 0;
+          var bestOffY = 0;
+          var threshold = GRAB_RADIUS / zoom;
+
+          for (var i = 0; i < TOTAL_POINTS; i++) {
+            var q = worldToView(pos[i * 3 + 0], pos[i * 3 + 1], pos[i * 3 + 2]);
+            var scale = CAM / Math.max(CAM - q.qz, 0.001);
+            var sx = q.qx * scale;
+            var sy = q.qy * scale;
+            var dist = Math.hypot(sx - ptrX, sy - ptrY);
+
+            if (dist <= threshold) {
+              var score = dist - 0.08 * q.qz;
+              if (score < bestScore) {
+                bestScore = score;
+                bestIdx = i;
+                bestQz = q.qz;
+                bestOffX = sx - ptrX;
+                bestOffY = sy - ptrY;
+              }
+            }
+          }
+
+          if (bestIdx !== -1) {
+            return {
+              index: bestIdx,
+              viewDepth: bestQz,
+              offsetX: bestOffX,
+              offsetY: bestOffY
+            };
+          }
+          return null;
+        }
+
+        function computeCarryWeights(pickedIndex) {
+          var carryRad = CARRY_RADIUS * CH;
+          var gFlatX = restPos[pickedIndex * 3 + 0];
+          var gFlatY = restPos[pickedIndex * 3 + 1];
+
+          for (var i = 0; i < TOTAL_POINTS; i++) {
+            if (i === PIN_LEFT || i === PIN_RIGHT) {
+              carryWeights[i] = 0;
+              continue;
+            }
+            if (i === pickedIndex) {
+              carryWeights[i] = 1.0;
+              continue;
+            }
+            var fx = restPos[i * 3 + 0];
+            var fy = restPos[i * 3 + 1];
+            var d = Math.hypot(fx - gFlatX, fy - gFlatY) / carryRad;
+            if (d < 1.0) {
+              var term = 1.0 - d * d;
+              carryWeights[i] = term * term;
+            } else {
+              carryWeights[i] = 0.0;
+            }
+          }
+        }
+
+        // Tethers
+        function applyTethers() {
+          for (var i = 0; i < TOTAL_POINTS; i++) {
+            if (i === PIN_LEFT || i === PIN_RIGHT) continue;
+
+            // Left pin
+            var maxL = 1.02 * flatDistLeft[i];
+            var dxL = pos[i * 3 + 0] - pinLeftPos.x;
+            var dyL = pos[i * 3 + 1] - pinLeftPos.y;
+            var dzL = pos[i * 3 + 2] - pinLeftPos.z;
+            var dL = Math.hypot(dxL, dyL, dzL);
+            if (dL > maxL && dL > 1e-6) {
+              var fL = maxL / dL;
+              pos[i * 3 + 0] = pinLeftPos.x + dxL * fL;
+              pos[i * 3 + 1] = pinLeftPos.y + dyL * fL;
+              pos[i * 3 + 2] = pinLeftPos.z + dzL * fL;
+            }
+
+            // Right pin
+            var maxR = 1.02 * flatDistRight[i];
+            var dxR = pos[i * 3 + 0] - pinRightPos.x;
+            var dyR = pos[i * 3 + 1] - pinRightPos.y;
+            var dzR = pos[i * 3 + 2] - pinRightPos.z;
+            var dR = Math.hypot(dxR, dyR, dzR);
+            if (dR > maxR && dR > 1e-6) {
+              var fR = maxR / dR;
+              pos[i * 3 + 0] = pinRightPos.x + dxR * fR;
+              pos[i * 3 + 1] = pinRightPos.y + dyR * fR;
+              pos[i * 3 + 2] = pinRightPos.z + dzR * fR;
+            }
+          }
+        }
+
+        // Relax single link
+        function relaxLink(linkIdx) {
+          var p1 = linkP1[linkIdx];
+          var p2 = linkP2[linkIdx];
+          var w1 = invMass[p1];
+          var w2 = invMass[p2];
+          var wSum = w1 + w2;
+          if (wSum <= 0) return;
+
+          var i1 = p1 * 3;
+          var i2 = p2 * 3;
+          var dX = pos[i2] - pos[i1];
+          var dY = pos[i2 + 1] - pos[i1 + 1];
+          var dZ = pos[i2 + 2] - pos[i1 + 2];
+          var dist = Math.hypot(dX, dY, dZ);
+          if (dist > 1e-6) {
+            var diff = ((dist - linkRest[linkIdx]) / dist) * linkStiff[linkIdx];
+            var corr = diff / wSum;
+            if (w1 > 0) {
+              pos[i1] += dX * (w1 * corr);
+              pos[i1 + 1] += dY * (w1 * corr);
+              pos[i1 + 2] += dZ * (w1 * corr);
+            }
+            if (w2 > 0) {
+              pos[i2] -= dX * (w2 * corr);
+              pos[i2 + 1] -= dY * (w2 * corr);
+              pos[i2 + 2] -= dZ * (w2 * corr);
+            }
+          }
+        }
+
+        var simTime = 0;
+        var sweepForward = true;
+
+        function runSubStep(h, dampingVal, windFlutter) {
+          simTime += h;
+          var damp = Math.exp(-(0.15 + 5.85 * dampingVal) * h);
+          var gust = 0.6 + 0.4 * Math.sin(0.37 * simTime) * Math.sin(0.23 * simTime + 1.0);
+          var wind = prefersReducedMotion ? 0 : windFlutter * 2.4 * gust * (GRAVITY / 2.6);
+
+          // 1. Verlet step
+          for (var i = 0; i < TOTAL_POINTS; i++) {
+            if (i === PIN_LEFT || i === PIN_RIGHT) continue;
+            if (isHeld && carryWeights[i] >= 0.98) continue;
+
+            var u = flatU[i];
+            var v = flatV[i];
+            var s1 = Math.sin(9.1 * u - 3.7 * v + 3.1 * simTime);
+            var s2 = Math.sin(6.3 * u + 7.9 * v - 2.3 * simTime + 1.3);
+            var s3 = Math.sin(2.9 * u + 1.7 * simTime + 0.8 * Math.sin(0.5 * simTime)) * Math.cos(2.3 * v - 0.9 * simTime);
+
+            var ax = wind * 0.25 * Math.sin(3.3 * v + 1.1 * simTime + u);
+            var ay = wind * 0.1 * s2 - GRAVITY;
+            var az = wind * (0.45 * s1 + 0.35 * s2 + 0.3 * s3);
+
+            var i3 = i * 3;
+            var vx = (pos[i3] - prev[i3]) * damp + ax * h * h;
+            var vy = (pos[i3 + 1] - prev[i3 + 1]) * damp + ay * h * h;
+            var vz = (pos[i3 + 2] - prev[i3 + 2]) * damp + az * h * h;
+
+            var speed = Math.hypot(vx, vy, vz);
+            var maxV = MAX_SPEED * h;
+            if (speed > maxV && speed > 1e-6) {
+              var f = maxV / speed;
+              vx *= f;
+              vy *= f;
+              vz *= f;
+            }
+
+            prev[i3] = pos[i3];
+            prev[i3 + 1] = pos[i3 + 1];
+            prev[i3 + 2] = pos[i3 + 2];
+
+            pos[i3] += vx;
+            pos[i3 + 1] += vy;
+            pos[i3 + 2] += vz;
+          }
+
+          // 2. Drag motion if held
+          if (isHeld && grabbedIdx >= 0) {
+            var targetSx = currentPtrScreenX + rememberedOffsetScreenX;
+            var targetSy = currentPtrScreenY + rememberedOffsetScreenY;
+            var scale = CAM / Math.max(CAM - rememberedViewDepth, 0.001);
+            var qx = targetSx / scale;
+            var qy = targetSy / scale;
+            var qz = rememberedViewDepth;
+
+            var worldTarget = viewToWorld(qx, qy, qz);
+
+            // Tether clamped
+            var dxL = worldTarget.px - pinLeftPos.x;
+            var dyL = worldTarget.py - pinLeftPos.y;
+            var dzL = worldTarget.pz - pinLeftPos.z;
+            var dL = Math.hypot(dxL, dyL, dzL);
+            var maxLeft = 1.02 * flatDistLeft[grabbedIdx];
+            if (dL > maxLeft && dL > 1e-6) {
+              var fL = maxLeft / dL;
+              worldTarget.px = pinLeftPos.x + dxL * fL;
+              worldTarget.py = pinLeftPos.y + dyL * fL;
+              worldTarget.pz = pinLeftPos.z + dzL * fL;
+            }
+
+            var dxR = worldTarget.px - pinRightPos.x;
+            var dyR = worldTarget.py - pinRightPos.y;
+            var dzR = worldTarget.pz - pinRightPos.z;
+            var dR = Math.hypot(dxR, dyR, dzR);
+            var maxRight = 1.02 * flatDistRight[grabbedIdx];
+            if (dR > maxRight && dR > 1e-6) {
+              var fR = maxRight / dR;
+              worldTarget.px = pinRightPos.x + dxR * fR;
+              worldTarget.py = pinRightPos.y + dyR * fR;
+              worldTarget.pz = pinRightPos.z + dzR * fR;
+            }
+
+            var deltaX = worldTarget.px - pos[grabbedIdx * 3 + 0];
+            var deltaY = worldTarget.py - pos[grabbedIdx * 3 + 1];
+            var deltaZ = worldTarget.pz - pos[grabbedIdx * 3 + 2];
+
+            for (var ptH = 0; ptH < TOTAL_POINTS; ptH++) {
+              if (ptH === PIN_LEFT || ptH === PIN_RIGHT) continue;
+              var weight = carryWeights[ptH];
+              if (weight >= 0.98) {
+                pos[ptH * 3 + 0] += deltaX;
+                pos[ptH * 3 + 1] += deltaY;
+                pos[ptH * 3 + 2] += deltaZ;
+              } else if (weight > 0) {
+                var mx = weight * deltaX;
+                var my = weight * deltaY;
+                var mz = weight * deltaZ;
+                pos[ptH * 3 + 0] += mx;
+                pos[ptH * 3 + 1] += my;
+                pos[ptH * 3 + 2] += mz;
+                prev[ptH * 3 + 0] += mx;
+                prev[ptH * 3 + 1] += my;
+                prev[ptH * 3 + 2] += mz;
+              }
+            }
+          }
+
+          // 3. Update invMass for link relaxation
+          for (var ptM = 0; ptM < TOTAL_POINTS; ptM++) {
+            if (ptM === PIN_LEFT || ptM === PIN_RIGHT || (isHeld && carryWeights[ptM] >= 0.98)) {
+              invMass[ptM] = 0.0;
+            } else {
+              invMass[ptM] = 1.0;
+            }
+          }
+
+          if (sweepForward) {
+            for (var lIdx = 0; lIdx < NUM_LINKS; lIdx++) {
+              relaxLink(lIdx);
+            }
+          } else {
+            for (var lIdxB = NUM_LINKS - 1; lIdxB >= 0; lIdxB--) {
+              relaxLink(lIdxB);
+            }
+          }
+          sweepForward = !sweepForward;
+
+          // 4. Apply tethers
+          applyTethers();
+
+          pos[PIN_LEFT * 3 + 0] = pinLeftPos.x;
+          pos[PIN_LEFT * 3 + 1] = pinLeftPos.y;
+          pos[PIN_LEFT * 3 + 2] = pinLeftPos.z;
+
+          pos[PIN_RIGHT * 3 + 0] = pinRightPos.x;
+          pos[PIN_RIGHT * 3 + 1] = pinRightPos.y;
+          pos[PIN_RIGHT * 3 + 2] = pinRightPos.z;
+        }
+
+        // Warmup: 360 sub-steps of 1/240 s with damping temporarily set to 1
+        var warmupH = 1.0 / 240.0;
+        for (var wStep = 0; wStep < 360; wStep++) {
+          runSubStep(warmupH, 1.0, 0.0);
+        }
+        for (var pIdx = 0; pIdx < TOTAL_POINTS * 3; pIdx++) {
+          prev[pIdx] = pos[pIdx];
+        }
+
+        // Shaders
+        var vsClothSource = [
+          'attribute vec3 a_position;',
+          'attribute vec3 a_normal;',
+          'attribute vec2 a_uv;',
+          'uniform vec3 u_R0;',
+          'uniform vec3 u_R1;',
+          'uniform vec3 u_R2;',
+          'uniform float u_CAM;',
+          'uniform float u_zoom;',
+          'uniform float u_aspect;',
+          'uniform vec2 u_center;',
+          'varying vec3 v_viewPos;',
+          'varying vec3 v_normal;',
+          'varying vec2 v_uv;',
+          'void main() {',
+          '  v_uv = a_uv;',
+          '  vec3 q = vec3(',
+          '    dot(u_R0, a_position),',
+          '    dot(u_R1, a_position),',
+          '    dot(u_R2, a_position)',
+          '  );',
+          '  v_viewPos = q;',
+          '  v_normal = normalize(vec3(',
+          '    dot(u_R0, a_normal),',
+          '    dot(u_R1, a_normal),',
+          '    dot(u_R2, a_normal)',
+          '  ));',
+          '  float scale = u_CAM / max(u_CAM - q.z, 0.001);',
+          '  vec2 screen = q.xy * scale * u_zoom;',
+          '  float clipX = 2.0 * (u_center.x + screen.x / u_aspect) - 1.0;',
+          '  float clipY = 1.0 - 2.0 * (u_center.y - screen.y);',
+          '  float clipZ = -q.z * 0.5;',
+          '  gl_Position = vec4(clipX, clipY, clipZ, 1.0);',
+          '}'
+        ].join('\n');
+
+        var fsClothSource = [
+          'precision highp float;',
+          'uniform sampler2D u_texture;',
+          'uniform bool u_hasTexture;',
+          'uniform float u_CAM;',
+          'varying vec3 v_viewPos;',
+          'varying vec3 v_normal;',
+          'varying vec2 v_uv;',
+          'float boxLight(vec3 dir, vec3 centre, vec2 halfSize, float soft) {',
+          '  if (dot(dir, centre) <= 0.0) return 0.0;',
+          '  vec3 tX = cross(vec3(0.0, 1.0, 0.0), centre);',
+          '  if (length(tX) < 0.001) tX = vec3(1.0, 0.0, 0.0);',
+          '  else tX = normalize(tX);',
+          '  vec3 tY = cross(centre, tX);',
+          '  vec3 dVec = dir - centre;',
+          '  float offX = dot(dVec, tX);',
+          '  float offY = dot(dVec, tY);',
+          '  float ex = smoothstep(-0.5, 0.5, (halfSize.x - abs(offX)) / soft);',
+          '  float ey = smoothstep(-0.5, 0.5, (halfSize.y - abs(offY)) / soft);',
+          '  return ex * ey;',
+          '}',
+          'vec3 rainbow(float p) {',
+          '  const float TWO_PI = 6.28318530718;',
+          '  return clamp(vec3(0.74, 0.58, 0.96) + vec3(0.26, 0.24, 0.10) * cos(TWO_PI * (vec3(p) + vec3(0.0, 0.28, 0.62))), 0.0, 1.0);',
+          '}',
+          'void main() {',
+          '  vec3 n = normalize(v_normal);',
+          '  bool back = (n.z < 0.0);',
+          '  if (back) n = -n;',
+          '  vec3 V = normalize(vec3(0.0, 0.0, u_CAM) - v_viewPos);',
+          '  vec3 Rf = reflect(-V, n);',
+          '  vec3 KEY = normalize(vec3(-0.42, 0.45, 0.79));',
+          '  float nv = clamp(dot(n, V), 0.0, 1.0);',
+          '  float nl = max(dot(n, KEY), 0.0);',
+          '  vec3 texColor = u_hasTexture ? texture2D(u_texture, v_uv).rgb : vec3(0.10, 0.02, 0.32);',
+          '  vec3 printCol = pow(texColor, vec3(2.2));',
+          '  float shade = 0.46 + 0.68 * nl + 0.08 * n.y;',
+          '  float key = pow(max(dot(Rf, KEY), 0.0), 26.0);',
+          '  float strip = boxLight(Rf, normalize(vec3(0.08, 0.93, 0.36)), vec2(1.1, 0.07), 0.22);',
+          '  float side  = boxLight(Rf, normalize(vec3(0.86, 0.12, 0.50)), vec2(0.06, 0.85), 0.20);',
+          '  float fill  = boxLight(Rf, KEY, vec2(0.42, 0.30), 0.35);',
+          '  float phase = 3.0 * (0.85 * dot(n.xy, vec2(0.6, 0.8)) + 0.75 * (1.0 - nv) + 0.3 * dot(Rf.xy, vec2(-0.8, 0.6))) + 0.4 * sin(5.0 * v_uv.x + 7.0 * v_uv.y);',
+          '  vec3 holo = mix(vec3(1.0), pow(rainbow(phase), vec3(2.2)), 0.8);',
+          '  float lum = dot(printCol, vec3(0.2126, 0.7152, 0.0722));',
+          '  float gloss = mix(1.0, 0.45, smoothstep(0.55, 0.9, lum));',
+          '  vec3 spec = holo * gloss * mix(vec3(1.0), printCol * 2.4 + vec3(0.08), 0.65) * (0.34 * key + 0.11 * strip + 0.07 * side + 0.02 * fill);',
+          '  vec3 colour = printCol * shade + spec + holo * printCol * 0.6 * pow(1.0 - nv, 3.0);',
+          '  if (back) {',
+          '    vec3 foil = vec3(0.30, 0.22, 0.52) * (0.35 + 0.9 * nl) + spec * 1.3;',
+          '    colour = mix(foil, printCol * shade, 0.38);',
+          '  }',
+          '  colour = min(colour, vec3(0.8)) + vec3(0.2) * (vec3(1.0) - exp(-max(colour - vec3(0.8), vec3(0.0)) / 0.2));',
+          '  gl_FragColor = vec4(pow(colour, vec3(1.0 / 2.2)), 1.0);',
+          '}'
+        ].join('\n');
+
+        var fsShadowClothSource = [
+          'precision mediump float;',
+          'void main() {',
+          '  gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);',
+          '}'
+        ].join('\n');
+
+        var vsShadowBlurSource = [
+          'attribute vec2 a_position;',
+          'varying vec2 v_uv;',
+          'void main() {',
+          '  v_uv = a_position * 0.5 + 0.5;',
+          '  gl_Position = vec4(a_position, 0.0, 1.0);',
+          '}'
+        ].join('\n');
+
+        var fsShadowBlurSource = [
+          'precision highp float;',
+          'uniform sampler2D u_shadowTex;',
+          'uniform vec2 u_step;',
+          'uniform vec2 u_shift;',
+          'varying vec2 v_uv;',
+          'void main() {',
+          '  vec2 centerUV = v_uv - u_shift;',
+          '  float sum = 0.0;',
+          '  float totalWeight = 0.0;',
+          '  for (int dy = -3; dy <= 3; dy++) {',
+          '    for (int dx = -3; dx <= 3; dx++) {',
+          '      float distSq = float(dx * dx + dy * dy);',
+          '      float w = exp(-distSq / 6.0);',
+          '      vec2 sampleUV = centerUV + vec2(float(dx), float(dy)) * u_step;',
+          '      float s = 0.0;',
+          '      if (sampleUV.x >= 0.0 && sampleUV.x <= 1.0 && sampleUV.y >= 0.0 && sampleUV.y <= 1.0) {',
+          '        s = texture2D(u_shadowTex, sampleUV).a;',
+          '      }',
+          '      sum += s * w;',
+          '      totalWeight += w;',
+          '    }',
+          '  }',
+          '  float alpha = (sum / totalWeight) * 0.30;',
+          '  vec3 rgb = vec3(0.07, 0.07, 0.16) * alpha;',
+          '  gl_FragColor = vec4(rgb, alpha);',
+          '}'
+        ].join('\n');
+
+        function createShader(type, source) {
+          var shader = gl.createShader(type);
+          gl.shaderSource(shader, source);
+          gl.compileShader(shader);
+          if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            gl.deleteShader(shader);
+            return null;
+          }
+          return shader;
+        }
+
+        function createProgram(vsSrc, fsSrc) {
+          var vs = createShader(gl.VERTEX_SHADER, vsSrc);
+          var fs = createShader(gl.FRAGMENT_SHADER, fsSrc);
+          if (!vs || !fs) return null;
+          var prog = gl.createProgram();
+          gl.attachShader(prog, vs);
+          gl.attachShader(prog, fs);
+          gl.linkProgram(prog);
+          if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+            gl.deleteProgram(prog);
+            return null;
+          }
+          return prog;
+        }
+
+        var clothProgram = createProgram(vsClothSource, fsClothSource);
+        var shadowClothProgram = createProgram(vsClothSource, fsShadowClothSource);
+        var shadowBlurProgram = createProgram(vsShadowBlurSource, fsShadowBlurSource);
+
+        if (!clothProgram || !shadowClothProgram || !shadowBlurProgram) {
+          fail();
+          return;
+        }
+
+        // Locations
+        var clothLoc = {
+          a_position: gl.getAttribLocation(clothProgram, 'a_position'),
+          a_normal: gl.getAttribLocation(clothProgram, 'a_normal'),
+          a_uv: gl.getAttribLocation(clothProgram, 'a_uv'),
+          u_R0: gl.getUniformLocation(clothProgram, 'u_R0'),
+          u_R1: gl.getUniformLocation(clothProgram, 'u_R1'),
+          u_R2: gl.getUniformLocation(clothProgram, 'u_R2'),
+          u_CAM: gl.getUniformLocation(clothProgram, 'u_CAM'),
+          u_zoom: gl.getUniformLocation(clothProgram, 'u_zoom'),
+          u_aspect: gl.getUniformLocation(clothProgram, 'u_aspect'),
+          u_center: gl.getUniformLocation(clothProgram, 'u_center'),
+          u_texture: gl.getUniformLocation(clothProgram, 'u_texture'),
+          u_hasTexture: gl.getUniformLocation(clothProgram, 'u_hasTexture')
+        };
+
+        var sClothLoc = {
+          a_position: gl.getAttribLocation(shadowClothProgram, 'a_position'),
+          u_R0: gl.getUniformLocation(shadowClothProgram, 'u_R0'),
+          u_R1: gl.getUniformLocation(shadowClothProgram, 'u_R1'),
+          u_R2: gl.getUniformLocation(shadowClothProgram, 'u_R2'),
+          u_CAM: gl.getUniformLocation(shadowClothProgram, 'u_CAM'),
+          u_zoom: gl.getUniformLocation(shadowClothProgram, 'u_zoom'),
+          u_aspect: gl.getUniformLocation(shadowClothProgram, 'u_aspect'),
+          u_center: gl.getUniformLocation(shadowClothProgram, 'u_center')
+        };
+
+        var sBlurLoc = {
+          a_position: gl.getAttribLocation(shadowBlurProgram, 'a_position'),
+          u_shadowTex: gl.getUniformLocation(shadowBlurProgram, 'u_shadowTex'),
+          u_step: gl.getUniformLocation(shadowBlurProgram, 'u_step'),
+          u_shift: gl.getUniformLocation(shadowBlurProgram, 'u_shift')
+        };
+
+        // GL Buffers
+        var posBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, pos, gl.DYNAMIC_DRAW);
+
+        var normalBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, normals, gl.DYNAMIC_DRAW);
+
+        var uvBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, uvCoords, gl.STATIC_DRAW);
+
+        var indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+
+        var quadBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+
+        // Cloth Texture setup
+        var clothTexture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, clothTexture);
+        gl.texImage2D(
+          gl.TEXTURE_2D,
+          0,
+          gl.RGBA,
+          1,
+          1,
+          0,
+          gl.RGBA,
+          gl.UNSIGNED_BYTE,
+          new Uint8Array([26, 5, 82, 255])
+        );
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+        var hasTexture = false;
+
+        // Shadow FBO
+        var shadowFbo = null;
+        var shadowTexture = null;
+        var shadowW = 160;
+        var shadowH = 90;
+
+        function initShadowFbo() {
+          shadowFbo = gl.createFramebuffer();
+          shadowTexture = gl.createTexture();
+          gl.bindTexture(gl.TEXTURE_2D, shadowTexture);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        }
+
+        function resizeShadowFbo(w, h) {
+          if (!shadowTexture) initShadowFbo();
+          shadowW = w;
+          shadowH = h;
+          gl.bindTexture(gl.TEXTURE_2D, shadowTexture);
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+          gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFbo);
+          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, shadowTexture, 0);
+          gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        }
+
+        updateView();
+
+        // Render Frame
+        function render() {
+          // 1. Upload positions and normals
+          gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+          gl.bufferSubData(gl.ARRAY_BUFFER, 0, pos);
+
+          gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+          gl.bufferSubData(gl.ARRAY_BUFFER, 0, normals);
+
+          // 2. Shadow pass
+          gl.bindFramebuffer(gl.FRAMEBUFFER, shadowFbo);
+          gl.viewport(0, 0, shadowW, shadowH);
+          gl.clearColor(0.0, 0.0, 0.0, 0.0);
+          gl.clear(gl.COLOR_BUFFER_BIT);
+
+          gl.disable(gl.DEPTH_TEST);
+          gl.disable(gl.BLEND);
+          gl.disable(gl.CULL_FACE);
+
+          gl.useProgram(shadowClothProgram);
+          gl.uniform3fv(sClothLoc.u_R0, R0);
+          gl.uniform3fv(sClothLoc.u_R1, R1);
+          gl.uniform3fv(sClothLoc.u_R2, R2);
+          gl.uniform1f(sClothLoc.u_CAM, CAM);
+          gl.uniform1f(sClothLoc.u_zoom, zoom);
+          gl.uniform1f(sClothLoc.u_aspect, aspectRatio);
+          gl.uniform2f(sClothLoc.u_center, cx, cy);
+
+          gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+          gl.enableVertexAttribArray(sClothLoc.a_position);
+          gl.vertexAttribPointer(sClothLoc.a_position, 3, gl.FLOAT, false, 0, 0);
+
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+          gl.drawElements(gl.TRIANGLES, NUM_INDICES, gl.UNSIGNED_SHORT, 0);
+
+          // 3. Shadow blur blit to main canvas
+          gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+          gl.viewport(0, 0, canvas.width, canvas.height);
+          gl.clearColor(0.0, 0.0, 0.0, 0.0);
+          gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+          gl.enable(gl.BLEND);
+          gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+          gl.disable(gl.DEPTH_TEST);
+
+          gl.useProgram(shadowBlurProgram);
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, shadowTexture);
+          gl.uniform1i(sBlurLoc.u_shadowTex, 0);
+
+          var tapScale = 0.9 + 1.5 * zoom * (heroHeight / 724.0);
+          var stepX = (1.0 / shadowW) * tapScale;
+          var stepY = (1.0 / shadowH) * tapScale;
+          gl.uniform2f(sBlurLoc.u_step, stepX, stepY);
+
+          var shiftX = -0.012 * zoom / aspectRatio;
+          var shiftY = -0.045 * zoom;
+          gl.uniform2f(sBlurLoc.u_shift, shiftX, shiftY);
+
+          gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+          gl.enableVertexAttribArray(sBlurLoc.a_position);
+          gl.vertexAttribPointer(sBlurLoc.a_position, 2, gl.FLOAT, false, 0, 0);
+          gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+          // 4. Main Cloth pass
+          gl.enable(gl.DEPTH_TEST);
+          gl.depthFunc(gl.LEQUAL);
+          gl.disable(gl.BLEND);
+          gl.disable(gl.CULL_FACE);
+
+          gl.useProgram(clothProgram);
+          gl.uniform3fv(clothLoc.u_R0, R0);
+          gl.uniform3fv(clothLoc.u_R1, R1);
+          gl.uniform3fv(clothLoc.u_R2, R2);
+          gl.uniform1f(clothLoc.u_CAM, CAM);
+          gl.uniform1f(clothLoc.u_zoom, zoom);
+          gl.uniform1f(clothLoc.u_aspect, aspectRatio);
+          gl.uniform2f(clothLoc.u_center, cx, cy);
+
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, clothTexture);
+          gl.uniform1i(clothLoc.u_texture, 0);
+          gl.uniform1i(clothLoc.u_hasTexture, hasTexture ? 1 : 0);
+
+          gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+          gl.enableVertexAttribArray(clothLoc.a_position);
+          gl.vertexAttribPointer(clothLoc.a_position, 3, gl.FLOAT, false, 0, 0);
+
+          gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+          gl.enableVertexAttribArray(clothLoc.a_normal);
+          gl.vertexAttribPointer(clothLoc.a_normal, 3, gl.FLOAT, false, 0, 0);
+
+          gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+          gl.enableVertexAttribArray(clothLoc.a_uv);
+          gl.vertexAttribPointer(clothLoc.a_uv, 2, gl.FLOAT, false, 0, 0);
+
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+          gl.drawElements(gl.TRIANGLES, NUM_INDICES, gl.UNSIGNED_SHORT, 0);
+        }
+
+        // Texture image loading
+        var img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function () {
+          gl.bindTexture(gl.TEXTURE_2D, clothTexture);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+
+          var ext = gl.getExtension('EXT_texture_filter_anisotropic') ||
+                    gl.getExtension('WEBKIT_EXT_texture_filter_anisotropic') ||
+                    gl.getExtension('MOZ_EXT_texture_filter_anisotropic');
+          if (ext) {
+            var maxAniso = gl.getParameter(ext.MAX_TEXTURE_MAX_ANISOTROPY_EXT) || 1;
+            gl.texParameterf(gl.TEXTURE_2D, ext.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, maxAniso));
+          }
+
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+          gl.generateMipmap(gl.TEXTURE_2D);
+          hasTexture = true;
+          render();
+        };
+        img.onerror = function () {
+          fail();
+        };
+        img.src = 'https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/9212999e-7a4a-4f70-bc34-e4e1c4533b81.jpg';
+
+        // Animation Loop
+        var animId = null;
+        var isVisible = true;
+        var isIntersecting = true;
+        var lastTime = performance.now();
+
+        function loop(now) {
+          var elapsed = Math.min((now - lastTime) / 1000.0, 1.0 / 30.0);
+          lastTime = now;
+
+          var h = elapsed / SUB_STEPS;
+          for (var s = 0; s < SUB_STEPS; s++) {
+            runSubStep(h, DAMPING, FLUTTER);
+          }
+
+          updateNormals();
+          render();
+
+          if (isVisible && isIntersecting) {
+            animId = requestAnimationFrame(loop);
+          } else {
+            animId = null;
+          }
+        }
+
+        function updateRunning() {
+          var shouldRun = isVisible && isIntersecting;
+          if (shouldRun && !animId) {
+            lastTime = performance.now();
+            animId = requestAnimationFrame(loop);
+          } else if (!shouldRun && animId) {
+            cancelAnimationFrame(animId);
+            animId = null;
+          }
+        }
+
+        document.addEventListener('visibilitychange', function () {
+          isVisible = (document.visibilityState === 'visible');
+          updateRunning();
+        });
+
+        var observer = new IntersectionObserver(function (entries) {
+          for (var eIdx = 0; eIdx < entries.length; eIdx++) {
+            isIntersecting = entries[eIdx].isIntersecting;
+          }
+          updateRunning();
+        }, { threshold: 0 });
+        observer.observe(heroEl);
+
+        window.addEventListener('resize', function () {
+          updateView();
+          render();
+        });
+
+        var ro = new ResizeObserver(function () {
+          updateView();
+          render();
+        });
+        ro.observe(heroEl);
+
+        // Interaction Handling
+        function onPointerDown(e) {
+          if (e.pointerType === 'mouse' && e.button !== 0) return;
+          var s = getScreenCoords(e.clientX, e.clientY);
+          var picked = findPick(s.x, s.y);
+          if (picked) {
+            isHeld = true;
+            activePointerId = e.pointerId;
+            grabbedIdx = picked.index;
+            rememberedViewDepth = picked.viewDepth;
+            rememberedOffsetScreenX = picked.offsetX;
+            rememberedOffsetScreenY = picked.offsetY;
+            currentPtrScreenX = s.x;
+            currentPtrScreenY = s.y;
+            computeCarryWeights(grabbedIdx);
+
+            canvas.classList.add('is-held');
+            try {
+              canvas.setPointerCapture(e.pointerId);
+            } catch (err) {}
+          }
+        }
+
+        function onPointerMove(e) {
+          var s = getScreenCoords(e.clientX, e.clientY);
+          if (isHeld && e.pointerId === activePointerId) {
+            currentPtrScreenX = s.x;
+            currentPtrScreenY = s.y;
+          } else if (!isHeld) {
+            var candidate = findPick(s.x, s.y);
+            canvas.classList.toggle('is-over', candidate !== null);
+          }
+        }
+
+        function onPointerUp(e) {
+          if (isHeld && e.pointerId === activePointerId) {
+            isHeld = false;
+            activePointerId = null;
+            grabbedIdx = -1;
+            canvas.classList.remove('is-held');
+            for (var ci = 0; ci < TOTAL_POINTS; ci++) {
+              carryWeights[ci] = 0;
+            }
+          }
+        }
+
+        canvas.addEventListener('pointerdown', onPointerDown);
+        canvas.addEventListener('pointermove', onPointerMove);
+        canvas.addEventListener('pointerup', onPointerUp);
+        canvas.addEventListener('pointercancel', onPointerUp);
+        canvas.addEventListener('lostpointercapture', onPointerUp);
+
+        // Touch handling
+        canvas.addEventListener('touchstart', function (e) {
+          if (e.touches.length > 0) {
+            var touch = e.touches[0];
+            var s = getScreenCoords(touch.clientX, touch.clientY);
+            var candidate = findPick(s.x, s.y);
+            if (candidate !== null) {
+              e.preventDefault();
+            }
+          }
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', function (e) {
+          if (isHeld) {
+            e.preventDefault();
+          }
+        }, { passive: false });
+
+        // Password Access Gate Controller
+        var gateEl = document.getElementById('gate');
+        var gateCard = document.getElementById('gate-card');
+        var gateForm = document.getElementById('gate-form');
+        var gatePass = document.getElementById('gate-pass');
+        var gateToggle = document.getElementById('gate-toggle');
+        var gateError = document.getElementById('gate-error');
+        var gateLockBtn = document.getElementById('gate-lock-btn');
+        var hintChip = document.getElementById('hint-chip');
+        var gateIconWrap = document.getElementById('gate-icon-wrap');
+        var gateCanvas = document.getElementById('gate-canvas');
+
+        var VALID_PASSWORDS = [
+          '21/1/2006',
+          '21/01/2006',
+          '21-1-2006',
+          '21-01-2006',
+          '21012006',
+          '2112006',
+          'peculiar',
+          'atelier'
+        ];
+
+        // Ambient Floating Particles in Gate Background
+        var gCtx = gateCanvas ? gateCanvas.getContext('2d') : null;
+        var gateParticles = [];
+        var mouseGateX = -1000;
+        var mouseGateY = -1000;
+
+        function resizeGateCanvas() {
+          if (!gateCanvas) return;
+          gateCanvas.width = window.innerWidth;
+          gateCanvas.height = window.innerHeight;
+          gateParticles = [];
+          var count = Math.min(50, Math.floor(window.innerWidth / 24));
+          for (var pi = 0; pi < count; pi++) {
+            gateParticles.push({
+              x: Math.random() * gateCanvas.width,
+              y: Math.random() * gateCanvas.height,
+              r: Math.random() * 2.5 + 1.2,
+              vx: (Math.random() - 0.5) * 0.45,
+              vy: -Math.random() * 0.45 - 0.15,
+              color: Math.random() > 0.4 ? 'rgba(91, 7, 251, ' : 'rgba(0, 240, 255, ',
+              alpha: Math.random() * 0.45 + 0.15
+            });
+          }
+        }
+
+        window.addEventListener('resize', resizeGateCanvas);
+        resizeGateCanvas();
+
+        function renderGateCanvas() {
+          if (!gCtx || gateEl.classList.contains('is-unlocked')) {
+            requestAnimationFrame(renderGateCanvas);
+            return;
+          }
+          gCtx.clearRect(0, 0, gateCanvas.width, gateCanvas.height);
+
+          for (var gi = 0; gi < gateParticles.length; gi++) {
+            var gp = gateParticles[gi];
+            gp.x += gp.vx;
+            gp.y += gp.vy;
+
+            // Soft push away from mouse
+            var distMouse = Math.hypot(gp.x - mouseGateX, gp.y - mouseGateY);
+            if (distMouse < 120 && distMouse > 1e-3) {
+              var force = (120 - distMouse) / 120;
+              gp.x += ((gp.x - mouseGateX) / distMouse) * force * 2;
+              gp.y += ((gp.y - mouseGateY) / distMouse) * force * 2;
+            }
+
+            if (gp.y < -10) gp.y = gateCanvas.height + 10;
+            if (gp.x < -10) gp.x = gateCanvas.width + 10;
+            if (gp.x > gateCanvas.width + 10) gp.x = -10;
+
+            gCtx.beginPath();
+            gCtx.arc(gp.x, gp.y, gp.r, 0, Math.PI * 2);
+            gCtx.fillStyle = gp.color + gp.alpha + ')';
+            gCtx.shadowBlur = 10;
+            gCtx.shadowColor = gp.color + '0.6)';
+            gCtx.fill();
+          }
+
+          requestAnimationFrame(renderGateCanvas);
+        }
+
+        requestAnimationFrame(renderGateCanvas);
+
+        // Interactive 3D Card Tilt on pointer move
+        if (gateEl && gateCard) {
+          gateEl.addEventListener('pointermove', function (e) {
+            mouseGateX = e.clientX;
+            mouseGateY = e.clientY;
+            var rect = gateCard.getBoundingClientRect();
+            var cardCenterX = rect.left + rect.width / 2;
+            var cardCenterY = rect.top + rect.height / 2;
+            var dx = (e.clientX - cardCenterX) / (window.innerWidth / 2);
+            var dy = (e.clientY - cardCenterY) / (window.innerHeight / 2);
+            var tiltX = -dy * 10;
+            var tiltY = dx * 10;
+            gateCard.style.transform = 'perspective(1000px) rotateX(' + tiltX.toFixed(2) + 'deg) rotateY(' + tiltY.toFixed(2) + 'deg)';
+          });
+
+          gateEl.addEventListener('pointerleave', function () {
+            mouseGateX = -1000;
+            mouseGateY = -1000;
+            gateCard.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+          });
+        }
+
+        function checkGate() {
+          if (sessionStorage.getItem('atelier_gate_unlocked') === 'true') {
+            gateEl.classList.add('is-unlocked');
+            if (gateLockBtn) gateLockBtn.style.display = 'inline-flex';
+          } else {
+            gateEl.classList.remove('is-unlocked');
+            if (gateCard) {
+              gateCard.classList.remove('is-unlocking');
+              gateCard.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+            }
+            if (gateIconWrap) gateIconWrap.classList.remove('is-unlocked');
+            if (gateLockBtn) gateLockBtn.style.display = 'none';
+            setTimeout(function () {
+              if (gatePass) gatePass.focus();
+            }, 100);
+          }
+        }
+
+        function unlockGateSequence() {
+          if (gateIconWrap) gateIconWrap.classList.add('is-unlocked');
+          if (gateCard) gateCard.classList.add('is-unlocking');
+
+          // Burst particles outward
+          if (gateCanvas) {
+            var rect = gateCard.getBoundingClientRect();
+            var cx = rect.left + rect.width / 2;
+            var cy = rect.top + rect.height / 2;
+            for (var bi = 0; bi < 40; bi++) {
+              var angle = Math.random() * Math.PI * 2;
+              var speed = Math.random() * 8 + 4;
+              gateParticles.push({
+                x: cx,
+                y: cy,
+                r: Math.random() * 3 + 2,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                color: Math.random() > 0.5 ? 'rgba(91, 7, 251, ' : 'rgba(0, 240, 255, ',
+                alpha: 1.0
+              });
+            }
+          }
+
+          setTimeout(function () {
+            sessionStorage.setItem('atelier_gate_unlocked', 'true');
+            gateEl.classList.add('is-unlocked');
+            if (gateLockBtn) gateLockBtn.style.display = 'inline-flex';
+            updateRunning();
+          }, 550);
+        }
+
+        function lockGate() {
+          sessionStorage.removeItem('atelier_gate_unlocked');
+          if (gatePass) gatePass.value = '';
+          if (gateError) {
+            gateError.textContent = '';
+            gateError.classList.remove('is-visible');
+          }
+          if (gateCard) {
+            gateCard.classList.remove('is-unlocking');
+            gateCard.classList.remove('has-error');
+          }
+          if (gateIconWrap) gateIconWrap.classList.remove('is-unlocked');
+          gateEl.classList.remove('is-unlocked');
+          if (gateLockBtn) gateLockBtn.style.display = 'none';
+          setTimeout(function () {
+            if (gatePass) gatePass.focus();
+          }, 100);
+        }
+
+        function trySubmit() {
+          var entered = (gatePass.value || '').trim().toLowerCase();
+          if (VALID_PASSWORDS.indexOf(entered) !== -1) {
+            if (gateError) {
+              gateError.textContent = '';
+              gateError.classList.remove('is-visible');
+            }
+            unlockGateSequence();
+          } else {
+            if (gateError) {
+              gateError.textContent = 'كلمة المرور غير صحيحة، حاول مجدداً / Incorrect passcode';
+              gateError.classList.add('is-visible');
+            }
+            if (gateCard) {
+              gateCard.classList.remove('has-error');
+              void gateCard.offsetWidth; // force reflow
+              gateCard.classList.add('has-error');
+            }
+            if (gatePass) {
+              gatePass.focus();
+              gatePass.select();
+            }
+          }
+        }
+
+        if (gateForm) {
+          gateForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            trySubmit();
+          });
+        }
+
+        if (gateToggle) {
+          gateToggle.addEventListener('click', function () {
+            var isPass = gatePass.type === 'password';
+            gatePass.type = isPass ? 'text' : 'password';
+            gateToggle.setAttribute('aria-label', isPass ? 'Hide password' : 'Show password');
+          });
+        }
+
+        // Animated typewriter auto-fill when clicking the passcode chip
+        var isTyping = false;
+        if (hintChip) {
+          hintChip.addEventListener('click', function () {
+            if (isTyping) return;
+            isTyping = true;
+            gatePass.value = '';
+            gatePass.focus();
+            if (gateError) gateError.classList.remove('is-visible');
+
+            var targetString = '21/1/2006';
+            var charIdx = 0;
+            var typeTimer = setInterval(function () {
+              if (charIdx < targetString.length) {
+                gatePass.value += targetString.charAt(charIdx);
+                charIdx++;
+              } else {
+                clearInterval(typeTimer);
+                isTyping = false;
+                setTimeout(trySubmit, 180);
+              }
+            }, 50);
+          });
+        }
+
+        if (gateLockBtn) {
+          gateLockBtn.addEventListener('click', function () {
+            lockGate();
+          });
+        }
+
+        checkGate();
+
+        // Initial setup and start
+        updateNormals();
+        render();
+        updateRunning();
+      })();
+    </script>
+  </body>
+</html>
